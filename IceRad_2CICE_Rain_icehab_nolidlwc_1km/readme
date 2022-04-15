@@ -1,0 +1,5 @@
+IceRad_2CICE_Rain_icehab_nolidlwc_1km
+
+change the vertical output resolution as 1 km
+delete the contribution of lidar liquid water content in radiation
+add surface temperatuer as skin temperature in ECMWF

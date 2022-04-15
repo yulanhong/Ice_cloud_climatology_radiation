@@ -1,0 +1,24 @@
+#
+#HDFHOME = /sw
+BIN = $(HOME)/bin
+LNK = -I$(HDFEOSHOME)/include -I$(HDFHOME)/include -L$(HDFHOME)/lib -L$(HDFEOSHOME)/lib -L$(HOME)/lib -lhdfeos -lmfhdf -ldf -ljpeg -lz -lGctp -lm -lmine
+FC = gfortran
+OPT = -O
+
+all: subcldsat read_cldsat read_ecaux cldsat_time clean
+clean:
+	rm -f *.o *.mod
+read_cldsat: datatype_module.o read_cloudsat.f90
+	$(FC) $(OPT) $? -o $(BIN)/$@ $(LNK)
+read_ecaux: datatype_module.o read_ecaux.f90
+	$(FC) $(OPT) $? -o $(BIN)/$@ $(LNK)
+subcldsat: datatype_module.f90 subtmp2m.f90 subgeoprof.f90 subtphprof.f90 subcwcro.f90 subtb94geoprof.f90
+	$(FC) -c $(OPT) $?
+	ar -cr libcldsat.a $(?:.f90=.o)
+	ranlib libcldsat.a
+	ln -sf `pwd`/libcldsat.a $(HOME)/lib
+cldsat_time: cldsat_time.c
+	gcc $(OPT) $? -o $(BIN)/$@ -L$(HOME)/lib -lmine
+
+datatype_module.o:
+	$(FC) -O -c datatype_module.f90
